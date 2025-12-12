@@ -1,4 +1,3 @@
-
 <script setup>
 import { ref } from 'vue';
 import { useBankStore } from '../stores/bank';
@@ -70,7 +69,7 @@ const handleTransaction = (type) => {
                                         @click="handleTransaction('deposit')" 
                                         class="btn btn-success w-100 btn-lg py-2 fw-bold"
                                     >
-                                        📥 ฝาก
+                                        ฝาก
                                     </button>
                                 </div>
                                 <div class="col-6">
@@ -78,7 +77,7 @@ const handleTransaction = (type) => {
                                         @click="handleTransaction('withdraw')" 
                                         class="btn btn-danger w-100 btn-lg py-2 fw-bold"
                                     >
-                                        📤 ถอน
+                                        ถอน
                                     </button>
                                 </div>
                             </div>
