@@ -1,12 +1,13 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useUserStore } from '../stores/user';
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '../stores/user'
 
-const email = ref('');
-const password = ref('');
-const router = useRouter();
-const userStore = useUserStore();
+const email = ref('')
+const password = ref('')
+const errors = ref([])
+const router = useRouter()
+const userStore = useUserStore()
 
 onMounted(() => {
     if (userStore.isLoggedIn) {
@@ -15,14 +16,23 @@ onMounted(() => {
 })
 
 const handleLogin = () => {
-    const emailRegex = /^[a-zA-Z][^\s@]*@[^\s@]+\.[a-zA-Z]{2,}$/
+    const emailRegex = /^[a-zA-Z][^\s@]*@[^\s@]+\.[a-zA-Z]$/
+    errors.value = []
     
-    if (!emailRegex.test(email.value)) {
-        alert('รูปแบบอีเมลไม่ถูกต้อง')
+    if (!email.value || !password.value) {
+        errors.value.push('กรุณากรอกข้อมูลให้ครบ')
         return
     }
-    if (!email.value || !password.value) {
-        alert('กรุณากรอกข้อมูลให้ครบ')
+    if (!emailRegex.test(email.value)) {
+        errors.value.push('รูปแบบอีเมลไม่ถูกต้อง')
+    }
+    if (password.value.length < 8) {
+        errors.value.push('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร')
+    }
+    if (password.value.length > 16) {
+        errors.value.push('รหัสผ่านต้องมีไม่เกิน 16 ตัวอักษร')
+    }
+    if (errors.value.length > 0) {
         return
     }
     userStore.login(email.value)
@@ -33,7 +43,7 @@ const handleLogin = () => {
 <template>
     <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
         <div class="card shadow p-4" style="width: 400px;">
-            <h3 class="text-center mb-4">Banking Website App</h3>
+            <h3 class="fs-4 fw-bold text-center text-primary mb-4">Banking Website App</h3>
 
             <form @submit.prevent="handleLogin">
                 <div class="mb-3">
@@ -43,9 +53,7 @@ const handleLogin = () => {
                         type="text" 
                         class="form-control" 
                         placeholder="example@domain.com"
-                        maxlength="50"
-                        required
-                    >
+                    />
                 </div>
 
                 <div class="mb-3">
@@ -55,9 +63,16 @@ const handleLogin = () => {
                         type="password" 
                         class="form-control" 
                         placeholder="********"
-                        maxlength="20"
-                        required
-                    >
+                    />
+                </div>
+                
+                <div v-if="errors.length > 0" class="alert alert-danger">
+                    <h6 class="fw-bold">กรุณาตรวจสอบข้อมูลที่กรอกดังต่อไปนี้:</h6>
+                    <ul>
+                        <li v-for="(error, index) in errors" :key="index">
+                            {{ error }}
+                        </li>
+                    </ul>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">
